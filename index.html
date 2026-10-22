@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zenix</title>
+    <meta name="description" content="Zenix · จุดเช็คเครดิตและรีวิวร้าน">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Zenix">
+    <meta property="og:description" content="Zenix · จุดเช็คเครดิตและรีวิวร้าน">
+    <meta property="og:image" content="https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg">
+    <meta property="og:image:alt" content="โลโก้ Zenix">
+    <meta property="og:locale" content="th_TH">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Zenix">
+    <meta name="twitter:description" content="Zenix · จุดเช็คเครดิตและรีวิวร้าน">
+    <meta name="twitter:image" content="https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg">
+    <link rel="icon" href="https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS Client v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            bg: 'var(--th-bg)',        
+                            phoneBg: 'var(--th-phoneBg)',   
+                            lilac: 'var(--th-lilac)',     
+                            lilacMid: 'var(--th-lilacMid)',  
+                            lilacDark: 'var(--th-lilacDark)', 
+                            mint: 'var(--th-mint)',      
+                            mintMid: 'var(--th-mintMid)',   
+                            pinkSoft: 'var(--th-pinkSoft)',  
+                            textMain: '#334E68',  
+                            textMuted: '#627D98',
+                            star: '#FFD27D',      
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'], 
+                        cute: ['Mali', 'cursive'],      
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            /* Default Blue-White Theme Colors for Zenix */
+            --th-bg: #EAF6FF;
+            --th-phoneBg: #F8FCFF;
+            --th-lilac: #D0EBFF;
+            --th-lilacMid: #A5D8FF;
+            --th-lilacDark: #1E6091;
+            --th-mint: #E3FAFC;
+            --th-mintMid: #74C0FC;
+            --th-pinkSoft: #CFE8FF;
+        }
+
+        body {
+            background-color: var(--th-bg);
+            background-image: radial-gradient(circle at top right, var(--th-phoneBg) 0%, var(--th-lilac) 100%);
+            color: theme('colors.theme.textMain');
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* -------------------------------------
+           1. PRELOADER (Pulse Ripple Design)
+           ------------------------------------- */
+        #preloader {
+            position: fixed; inset: 0; z-index: 99999;
+            background: linear-gradient(135deg, var(--th-phoneBg), var(--th-bg));
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease-out, visibility 0.6s;
+        }
+        #preloader.hidden-preloader { opacity: 0; visibility: hidden; }
+
+        .preloader-content {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* Smooth Floating Circle with Pulse Ripple */
+        .cute-logo-wrapper {
+            position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 24px;
+            width: 90px; height: 90px;
+        }
+        .cute-logo {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--th-pinkSoft), var(--th-lilacMid));
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Mali', cursive; font-weight: bold; font-size: 1.25rem; color: #fff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border: 4px solid white;
+            position: relative;
+            z-index: 2;
+            animation: floatSmooth 3s ease-in-out infinite;
+        }
+        .logo-pulse {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 80px; height: 80px;
+            background: var(--th-lilacMid);
+            border-radius: 50%;
+            z-index: 1;
+            animation: pulseRipple 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @keyframes floatSmooth {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes pulseRipple {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+        }
+
+        .preloader-title {
+            font-family: 'Mali', cursive; font-weight: bold; font-size: 2.25rem;
+            color: var(--th-lilacDark); letter-spacing: 1px; margin-bottom: 8px;
+            text-shadow: 2px 2px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white, 0 8px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Pulsing Text */
+        .welcome-text {
+            animation: textFade 2s ease-in-out infinite;
+        }
+        @keyframes textFade {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 180px; height: 8px; background: rgba(255,255,255,0.6);
+            border-radius: 10px; padding: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            background: linear-gradient(90deg, var(--th-pinkSoft), var(--th-lilacMid), var(--th-mintMid));
+            background-size: 200% 100%;
+            width: 0%;
+            animation: fillUp 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards, gradientMove 2s linear infinite;
+        }
+        @keyframes fillUp { 0% { width: 0%; } 40% { width: 50%; } 80% { width: 85%; } 100% { width: 100%; } }
+        @keyframes gradientMove { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+        /* -------------------------------------
+           2. MAIN PHONE FRAME & LAYOUT
+           ------------------------------------- */
+        .phone-frame {
+            width: 100%;
+            height: 100vh;
+            background-color: var(--th-phoneBg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            isolation: isolate;
+        }
+
+        @media (min-width: 640px) {
+            .phone-frame {
+                width: 414px;
+                height: 850px;
+                border-radius: 45px;
+                border: 12px solid #ffffff; 
+                box-shadow: 0 25px 50px -12px rgba(30, 96, 145, 0.22);
+                margin: 20px 0;
+                overflow: hidden; 
+                -webkit-mask-image: -webkit-radial-gradient(white, black);
+            }
+            .phone-notch {
+                position: absolute;
+                top: 0; left: 50%; transform: translateX(-50%);
+                width: 140px; height: 32px; background-color: #ffffff;
+                border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+                z-index: 50;
+            }
+        }
+
+        /* -------------------------------------
+           3. BANNER (Fixed Background Style)
+           ------------------------------------- */
+        .banner-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 380px; 
+            z-index: 0;
+            pointer-events: none;
+        }
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+        .banner-fade {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 180px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--th-phoneBg) 85%, var(--th-phoneBg) 100%);
+        }
+
+        /* -------------------------------------
+           4. MARQUEE DESIGN (Cute Pill Style)
+           ------------------------------------- */
+        .marquee-pill-wrapper {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 99px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            height: 36px;
+            margin: 0 16px;
+            border: 2px solid white;
+        }
+        .marquee-icon-box {
+            background-color: var(--th-lilac); 
+            height: 100%;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .marquee-icon-box i {
+            color: var(--th-lilacDark); 
+            font-size: 13px;
+        }
+        .marquee-text-container {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .marquee-content { 
+            display: inline-block; 
+            animation: marquee 12s linear infinite; 
+            padding-left: 100%; 
+        }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        /* -------------------------------------
+           5. CONTENT & SCROLL AREA
+           ------------------------------------- */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 100%;
+            padding-top: 50px; 
+            overflow: hidden; 
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .chat-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px;
+            padding-bottom: 120px; /* Space for buttons */
+        }
+
+        /* -------------------------------------
+           6. CHAT BUBBLES
+           ------------------------------------- */
+        .review-bubble {
+            background: #ffffff;
+            padding: 16px;
+            margin-bottom: 16px;
+            width: 88%;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .animate-chat { opacity: 1 !important; transform: translateY(0) scale(1) !important; }
+
+        .bubble-left { border-radius: 24px 24px 24px 8px; align-self: flex-start; border: 1px solid var(--th-lilac); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); }
+        .bubble-right { border-radius: 24px 24px 8px 24px; align-self: flex-end; border: 1px solid var(--th-mintMid); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); }
+
+        .typing-bubble {
+            background: #ffffff; padding: 14px 20px; display: inline-flex; align-items: center; margin-bottom: 16px;
+            opacity: 0; transform: translateY(15px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); width: fit-content;
+        }
+        .typing-bubble.left { border-radius: 24px 24px 24px 8px; align-self: flex-start; border: 1px solid var(--th-lilac); }
+        .typing-bubble.right { border-radius: 24px 24px 8px 24px; align-self: flex-end; border: 1px solid var(--th-mintMid); }
+        .typing-bubble.active { opacity: 1; transform: translateY(0); }
+        
+        .typing-indicator { display: flex; gap: 5px; align-items: center; }
+        .typing-indicator span {
+            display: block; width: 7px; height: 7px; background-color: var(--th-mintMid); border-radius: 50%; 
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; background-color: var(--th-lilacMid); }
+        .typing-indicator span:nth-child(3) { background-color: var(--th-pinkSoft); }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+
+        /* -------------------------------------
+           7. STAR ANIMATIONS (ลูกเล่นระดับดาว)
+           ------------------------------------- */
+        @keyframes starPop {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.4) rotate(-15deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+        .star-anim-active { 
+            animation: starPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255, 210, 125, 0)); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 3px rgba(255, 210, 125, 0.8)); }
+        }
+        .chat-star { 
+            display: inline-block; 
+            animation: starTwinkle 2.5s infinite ease-in-out; 
+        }
+
+        /* -------------------------------------
+           8. BOTTOM BUTTONS (Transparent Background)
+           ------------------------------------- */
+        .bottom-action-area {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 20px 20px 30px 20px;
+            z-index: 30;
+            pointer-events: none; 
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.95) 100%);
+        }
+        .bottom-action-inner {
+            pointer-events: auto; 
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        @keyframes floatCute {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .btn-float { animation: floatCute 3.5s ease-in-out infinite; }
+        .btn-float:nth-child(2) { animation-delay: 1.75s; }
+        
+        .btn-press { transition: transform 0.1s; }
+        .btn-press:active { transform: scale(0.92); }
+
+        /* -------------------------------------
+           9. MODALS & POPUPS
+           ------------------------------------- */
+        .modal-overlay {
+            position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); z-index: 100; 
+            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { transform: scale(0.9) translateY(20px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 85vh; overflow-y: auto; }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+        
+        /* Slide Up Modal */
+        .slide-modal {
+            position: absolute; inset: 0; background: var(--th-phoneBg); z-index: 90; transform: translateY(100%); 
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; flex-direction: column;
+            border-top-left-radius: 40px; border-top-right-radius: 40px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); top: auto; height: 85%;
+        }
+        .slide-modal.active { transform: translateY(0); }
+        .slide-modal-bg-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 89; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .slide-modal-bg-overlay.active { opacity: 1; pointer-events: auto; }
+
+        /* CONTACT MODAL (OVERFLOW VISIBLE) */
+        #contact-modal .modal-content {
+            overflow: visible !important; 
+        }
+
+        /* 1:1 Story Container (Frosted Glass Style) */
+        .cute-story-container {
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(25px);
+            border: 4px solid rgba(255,255,255,0.9); border-radius: 35px;
+            overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            width: 100%; aspect-ratio: 1 / 1; 
+            margin: auto; position: relative;
+        }
+        .story-progress-bar { height: 3px; background: rgba(255,255,255,0.4); border-radius: 4px; overflow: hidden; flex: 1; }
+        .story-progress-fill { height: 100%; background: #ffffff; width: 0%; transform-origin: left; }
+        .story-progress-fill.active { animation: storyProgress 4s linear forwards; }
+        .story-progress-fill.completed { width: 100%; }
+        @keyframes storyProgress { from { width: 0%; } to { width: 100%; } }
+
+        /* Contact Glow Effects */
+        .glow-bg {
+            position: absolute; inset: -4px; border-radius: 99px; filter: blur(12px); opacity: 0.4; z-index: -1; transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .contact-link-btn:hover .glow-bg { opacity: 0.7; transform: scale(1.02); }
+        
+        .contact-link-btn {
+            display: flex; align-items: center; padding: 14px 20px;
+            border-radius: 99px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 2px solid rgba(255,255,255,0.8);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        /* Custom Non-blocking Toast Banner */
+        #toast-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 88%;
+            max-width: 340px;
+            pointer-events: none;
+        }
+        .toast-item {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--th-lilac);
+            color: var(--th-lilacDark);
+            padding: 10px 16px;
+            border-radius: 99px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(30, 96, 145, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            animation: toastIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-12px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. PRELOADER -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <!-- Floating Logo with Pulse Ripple -->
+            <div class="cute-logo-wrapper">
+                <div class="logo-pulse"></div>
+                <div class="cute-logo">
+                    <img id="preloader-logo-img" src="https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg" alt="Zenix" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+                </div>
+            </div>
+            
+            <h1 class="preloader-title" id="preloader-shop-name">Zenix</h1>
+            
+            <div class="bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm mb-6 border border-white welcome-text">
+                <span class="font-sans text-[10px] font-bold text-gray-500">จุดเช็คเครดิต ยินดีต้อนรับ ✨</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN PHONE FRAME -->
+    <div class="phone-frame">
+        <div class="phone-notch hidden sm:block"></div>
+        
+        <!-- Toast Notification Container -->
+        <div id="toast-container"></div>
+
+        <!-- LAYER 1: BANNER (Fixed background, clipped by phone-frame border) -->
+        <div class="banner-layer">
+            <img id="app-banner" src="https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg" alt="Banner" class="banner-img">
+            <div class="banner-fade"></div>
+        </div>
+        
+        <!-- LAYER 2: CONTENT (Scrolls internally) -->
+        <div class="content-layer">
+            
+            <!-- Marquee (Pill Style) -->
+            <div class="mb-4 z-20">
+                <div class="marquee-pill-wrapper">
+                    <div class="marquee-icon-box" id="marquee-icon-bg">
+                        <i class="fa-solid fa-bullhorn" id="marquee-icon-color"></i>
+                    </div>
+                    <div class="marquee-text-container">
+                        <div class="marquee-content font-sans text-xs font-medium text-gray-600" id="marquee-display">
+                            ยินดีต้อนรับสู่ร้าน Zenix ค่ะ 💙 ขอบคุณทุกรีวิวที่น่ารักนะคะ ✨
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Small Capsule Menus -->
+            <div class="flex justify-center gap-3 px-6 mb-4 mt-28 relative z-20">
+                <button onclick="openModal('contact-modal')" class="flex-1 bg-white/95 backdrop-blur-sm py-2 px-4 rounded-full text-theme-textMain font-sans text-[11px] font-bold shadow-sm border border-white transition-all btn-press flex items-center justify-center gap-2 hover:bg-gray-50 text-gray-700">
+                    <i class="fa-solid fa-address-book" style="color: var(--th-lilacDark)"></i> ติดต่อเรา
+                </button>
+                <button onclick="openHighlightGallery()" class="flex-1 bg-white/95 backdrop-blur-sm py-2 px-4 rounded-full text-theme-textMain font-sans text-[11px] font-bold shadow-sm border border-white transition-all btn-press flex items-center justify-center gap-2 hover:bg-gray-50 text-gray-700">
+                    <i class="fa-solid fa-star text-theme-mintMid" style="color: var(--th-mintMid)"></i> ไฮไลท์ร้าน
+                </button>
+                
+                <!-- Admin Settings -->
+                <button onclick="openAdmin()" class="absolute -bottom-10 right-4 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center transition-colors z-20 btn-press border border-white" style="color: var(--th-lilacDark)" title="จัดการระบบหลังบ้าน">
+                    <i class="fa-solid fa-gear text-[10px]"></i>
+                </button>
+            </div>
+            
+            <!-- Chat Scroll Area -->
+            <div class="chat-scroll-area hide-scrollbar" id="main-scroll-area">
+                
+                <div class="flex justify-center mb-6 mt-2">
+                    <div class="bg-white/90 backdrop-blur-md px-5 py-2 rounded-full shadow-sm border border-white">
+                        <span class="font-sans text-[10px] font-bold" id="review-count-display" style="color: var(--th-lilacDark)">รีวิวทั้งหมด 0 รายการ 💙</span>
+                    </div>
+                </div>
+
+                <div id="chat-container" class="flex flex-col relative justify-end min-h-[50%]">
+                    <!-- Chat bubbles injected here -->
+                    <div id="chat-spacer" class="h-4 shrink-0 mt-auto"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAYER 3: BOTTOM BUTTONS (Transparent Overlay) -->
+        <div class="bottom-action-area">
+            <div class="bottom-action-inner">
+                <!-- Minus Button (Capsule, Floating) -->
+                <button onclick="openModal('minus-modal')" class="flex-1 flex flex-col items-center group btn-press btn-float">
+                    <div class="w-full py-3.5 px-4 rounded-full bg-white shadow-[0_10px_25px_rgba(0,0,0,0.08)] flex items-center justify-center gap-2 border-[3px] border-white transition-all" style="color: var(--th-lilacDark)">
+                        <i class="fa-solid fa-heart-crack text-lg" style="color: var(--th-lilacMid)"></i>
+                        <span class="font-cute font-bold text-sm">Minus one</span>
+                    </div>
+                    <p class="font-sans text-[8px] text-gray-500 text-center mt-2 font-medium bg-white/70 px-3 py-1 rounded-full backdrop-blur-sm">แจ้งเรื่องให้ร้านปรับปรุง ♡</p>
+                </button>
+
+                <!-- Plus Button (Capsule, Floating) -->
+                <button onclick="openModal('plus-modal')" class="flex-1 flex flex-col items-center group btn-press btn-float">
+                    <div class="w-full py-3.5 px-4 rounded-full shadow-[0_10px_25px_rgba(0,0,0,0.12)] flex items-center justify-center gap-2 text-gray-800 border-[3px] border-white transition-all" style="background: linear-gradient(135deg, var(--th-mint), var(--th-mintMid))">
+                        <i class="fa-solid fa-heart text-white text-lg drop-shadow-sm"></i>
+                        <span class="font-cute font-bold text-sm text-gray-800">Plus one</span>
+                    </div>
+                    <p class="font-sans text-[8px] text-gray-500 text-center mt-2 font-medium bg-white/70 px-3 py-1 rounded-full backdrop-blur-sm">กดเพื่อให้คะแนนร้าน ♡</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODALS AREA -->
+        <!-- ============================================== -->
+        
+        <!-- 1. Contact Popup (OVERFLOW VISIBLE) -->
+        <div id="contact-modal" class="modal-overlay">
+            <div class="modal-content bg-white w-[85%] max-w-[320px] rounded-[35px] p-6 shadow-2xl relative border-[4px] border-white pt-10" style="background-image: radial-gradient(circle at top right, var(--th-phoneBg) 0%, #ffffff 100%);">
+                
+                <!-- Floating Icon overlapping top border perfectly -->
+                <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 w-[70px] h-[70px] bg-white rounded-full p-1.5 shadow-[0_10px_20px_rgba(30,96,145,0.15)] border-4 border-white z-20">
+                    <div class="w-full h-full rounded-full flex items-center justify-center text-2xl text-white" style="background: var(--th-lilacDark);">
+                        <i class="fa-solid fa-address-book"></i>
+                    </div>
+                </div>
+
+                <button onclick="closeModal('contact-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-400 w-8 h-8 rounded-full flex items-center justify-center transition-colors btn-press bg-gray-50 z-10">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                
+                <div class="text-center mb-6 mt-3 relative z-10">
+                    <h3 class="font-cute font-bold text-xl mb-1" style="color: var(--th-lilacDark)">ช่องทางการติดต่อ</h3>
+                    <p class="text-[10px] text-theme-textMuted font-sans">สอบถามเพิ่มเติมได้ทุกช่องทางเลยนะคะ ✨</p>
+                </div>
+                
+                <div class="font-sans space-y-3 relative z-10" id="contact-links-container">
+                    <!-- Links injected here by JS with Blur Glow Effects -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Highlight Gallery (Slide Up Modal) -->
+        <div id="highlight-gallery-bg" class="slide-modal-bg-overlay" onclick="closeHighlightGallery()"></div>
+        <div id="highlight-gallery-modal" class="slide-modal">
+            <div class="pt-6 pb-3 px-6 rounded-t-[40px] flex items-center justify-between z-10 relative border-b border-theme-lilac/50" style="background-color: var(--th-phoneBg)">
+                <h2 class="font-cute font-bold text-lg flex items-center gap-2" style="color: var(--th-lilacDark)">
+                    คลังไฮไลท์ <i class="fa-solid fa-star text-theme-star text-sm"></i>
+                </h2>
+                <button onclick="closeHighlightGallery()" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-theme-textMuted btn-press shadow-sm">
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto px-6 py-6 flex flex-wrap gap-x-4 gap-y-6 justify-start content-start" id="gallery-container" style="background-color: var(--th-phoneBg)">
+                <!-- Highlights injected here -->
+            </div>
+        </div>
+
+        <!-- 3. Story Viewer (1:1 Ratio Frosted Glass) -->
+        <div id="story-modal" class="modal-overlay z-[110]" style="background: rgba(255,255,255,0.4); backdrop-filter: blur(15px);">
+            <div class="w-full h-full max-w-[414px] flex flex-col justify-center relative p-6" onclick="nextStory()">
+                
+                <!-- Story Header -->
+                <div class="flex justify-between items-center mb-4 z-10 relative pointer-events-none">
+                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md py-1.5 px-3 rounded-full shadow-sm">
+                        <div class="w-7 h-7 rounded-full p-[2px]" style="background: linear-gradient(to top right, var(--th-mintMid), var(--th-lilac))">
+                            <img id="story-shop-logo" src="https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg" class="w-full h-full bg-white rounded-full object-cover">
+                        </div>
+                        <span class="font-sans font-bold text-xs" id="story-shop-name" style="color: var(--th-lilacDark)">Zenix</span>
+                    </div>
+                    <button onclick="closeStory(event)" class="pointer-events-auto text-gray-500 p-2 bg-white/90 rounded-full backdrop-blur-sm w-9 h-9 flex items-center justify-center shadow-sm btn-press">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- The 1:1 Square Container -->
+                <div class="cute-story-container">
+                    <div class="w-full flex gap-1.5 p-4 absolute top-0 z-20" id="story-progress-container"></div>
+                    <img id="story-img" src="" class="absolute inset-0 w-full h-full object-cover">
+                    <!-- Title badge at bottom -->
+                    <div class="absolute bottom-6 inset-x-0 flex justify-center z-10 pointer-events-none">
+                        <div class="bg-white/90 backdrop-blur-md px-6 py-2 rounded-full shadow-sm">
+                            <h2 id="story-text-title" class="font-cute text-sm font-bold" style="color: var(--th-lilacDark)">Title</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center text-gray-600 font-sans text-xs mx-auto w-fit bg-white/60 px-4 py-1.5 rounded-full">แตะเพื่อดูรูปถัดไป ✨</div>
+            </div>
+        </div>
+
+        <!-- 4. Plus One Form -->
+        <div id="plus-modal" class="modal-overlay">
+            <div class="modal-content bg-white w-[90%] max-w-[340px] rounded-[35px] p-6 shadow-2xl relative border-[3px]" style="border-color: var(--th-mintMid)">
+                <button onclick="closeModal('plus-modal')" class="absolute top-4 right-4 text-theme-textMuted bg-gray-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors btn-press border border-white"><i class="fa-solid fa-xmark"></i></button>
+                <div class="text-center mb-4 mt-2">
+                    <div class="inline-block px-3 py-1 text-gray-700 rounded-full font-cute text-[9px] font-bold mb-2 shadow-sm border border-white" style="background-color: var(--th-mint)">หน้าร้าน</div>
+                    <h3 class="font-cute font-bold text-xl text-gray-800 mb-1">รีวิวให้กำลังใจ 💙</h3>
+                </div>
+                <div class="space-y-4 font-sans text-sm">
+                    <div>
+                        <label class="block text-[11px] font-bold mb-1" style="color: var(--th-lilacDark)">ชื่อผู้รีวิว <span class="text-red-400">*</span></label>
+                        <input type="text" id="plus-name" placeholder="ระบุชื่อของคุณ" class="w-full border rounded-2xl p-3 focus:outline-none transition-all text-xs" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold mb-1" style="color: var(--th-lilacDark)">ระดับความประทับใจ <span class="text-red-400">*</span></label>
+                        <div class="flex justify-center gap-2 text-2xl text-gray-200 py-2 rounded-2xl border" id="plus-stars" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                            <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition-transform" onclick="setStar(1)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition-transform" onclick="setStar(2)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition-transform" onclick="setStar(3)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition-transform" onclick="setStar(4)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:scale-125 transition-transform text-theme-star" onclick="setStar(5)"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold mb-1" style="color: var(--th-lilacDark)">ความรู้สึกของคุณ <span class="text-red-400">*</span></label>
+                        <textarea id="plus-text" placeholder="สินค้าถูกใจไหม บริการเป็นอย่างไรบ้าง..." class="w-full border rounded-2xl p-3 focus:outline-none transition-all resize-none h-16 text-xs" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold mb-1" style="color: var(--th-lilacDark)">แนบรูปลิงก์ (ไม่บังคับ)</label>
+                        <input type="text" id="plus-img" placeholder="วางลิงก์รูปภาพ (ถ้ามี)" class="w-full border border-dashed rounded-2xl p-3 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                    </div>
+                    <p id="plus-error" class="text-[10px] text-red-500 font-bold hidden text-center bg-red-50 p-1.5 rounded-lg border border-red-100">กรุณากรอกชื่อและข้อความรีวิวให้ครบถ้วนค่ะ</p>
+                    <button id="btn-submit-plus" onclick="submitPlusReview()" class="w-full py-3 text-gray-800 font-cute font-bold text-sm rounded-2xl shadow-sm btn-press flex items-center justify-center gap-2 border border-white" style="background: linear-gradient(to right, var(--th-mintMid), var(--th-mint))">
+                        โพสต์รีวิว
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Minus One Form -->
+        <div id="minus-modal" class="modal-overlay">
+            <div class="modal-content bg-white w-[90%] max-w-[340px] rounded-[35px] p-6 shadow-2xl relative border-[3px]" style="border-color: var(--th-lilacDark)">
+                <button onclick="closeModal('minus-modal')" class="absolute top-4 right-4 text-theme-textMuted hover:text-red-500 bg-gray-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors btn-press border border-white"><i class="fa-solid fa-xmark"></i></button>
+                <div class="text-center mb-4 mt-2">
+                    <div class="inline-block px-3 py-1 bg-gray-100 text-gray-600 rounded-full font-cute text-[9px] font-bold mb-2 shadow-sm border border-white">แจ้งปัญหา</div>
+                    <h3 class="font-cute font-bold text-xl mb-1" style="color: var(--th-lilacDark)">แจ้งเรื่องให้ปรับปรุง 🥺</h3>
+                    <p class="text-[10px] text-theme-textMuted font-sans leading-tight">ข้อมูลนี้จะส่งตรงถึงแอดมินเท่านั้น</p>
+                </div>
+                <div class="space-y-3 font-sans text-sm">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 mb-1">Facebook <span class="text-red-500">*</span></label>
+                            <input type="text" id="min-fb" class="w-full border rounded-xl p-2.5 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 mb-1">Instagram <span class="text-red-500">*</span></label>
+                            <input type="text" id="min-ig" class="w-full border rounded-xl p-2.5 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 mb-1">Line ID <span class="text-red-500">*</span></label>
+                            <input type="text" id="min-line" class="w-full border rounded-xl p-2.5 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 mb-1">X/Twitter <span class="text-red-500">*</span></label>
+                            <input type="text" id="min-x" class="w-full border rounded-xl p-2.5 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-1">รายละเอียดปัญหา <span class="text-red-500">*</span></label>
+                        <textarea id="min-text" class="w-full border rounded-xl p-3 resize-none h-16 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)"></textarea>
+                    </div>
+                    <p id="minus-error" class="text-[10px] text-red-500 font-bold hidden text-center bg-red-50 p-1.5 rounded-lg border border-red-100">กรุณากรอกข้อมูลให้ครบทุกช่องค่ะ</p>
+                    <button id="btn-submit-minus" onclick="submitMinusReview()" class="w-full py-3 text-white font-cute font-bold text-sm rounded-xl shadow-md btn-press border" style="background-color: var(--th-lilacDark); border-color: var(--th-lilacDark)">
+                        ส่งให้แอดมินตรวจสอบ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5.5 Admin Login Modal (Supabase Auth + Admin Role Verification) -->
+        <div id="admin-login-modal" class="modal-overlay z-[120]">
+            <div class="modal-content bg-white w-[88%] max-w-[330px] rounded-[35px] p-6 shadow-2xl relative border-[3px]" style="border-color: var(--th-lilacDark)">
+                <button onclick="closeModal('admin-login-modal')" class="absolute top-4 right-4 text-theme-textMuted hover:text-red-500 bg-gray-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors btn-press border border-white"><i class="fa-solid fa-xmark"></i></button>
+                <div class="text-center mb-4 mt-1">
+                    <div class="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center text-white shadow-sm" style="background-color: var(--th-lilacDark)">
+                        <i class="fa-solid fa-user-shield text-lg"></i>
+                    </div>
+                    <h3 class="font-cute font-bold text-lg" style="color: var(--th-lilacDark)">เข้าสู่ระบบแอดมิน</h3>
+                    <p class="text-[10px] text-theme-textMuted font-sans">เฉพาะแอดมินหลักของร้าน Zenix เท่านั้น</p>
+                </div>
+                <div class="space-y-3 font-sans text-xs">
+                    <div>
+                        <label class="block text-[10px] font-bold mb-1" style="color: var(--th-lilacDark)">อีเมลแอดมิน</label>
+                        <input type="email" id="admin-email-input" placeholder="darawade28042552@gmail.com" class="w-full border rounded-xl p-2.5 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold mb-1" style="color: var(--th-lilacDark)">รหัสผ่าน</label>
+                        <input type="password" id="admin-password-input" placeholder="••••••••" class="w-full border rounded-xl p-2.5 text-xs focus:outline-none" style="background-color: var(--th-phoneBg); border-color: var(--th-lilac)" onkeydown="if(event.key==='Enter') handleAdminLogin()">
+                    </div>
+                    <p id="admin-login-error" class="text-[10px] text-red-500 font-bold hidden text-center bg-red-50 p-2 rounded-lg border border-red-100"></p>
+                    <button id="btn-admin-login" onclick="handleAdminLogin()" class="w-full py-3 text-white font-cute font-bold text-sm rounded-xl shadow-md btn-press" style="background-color: var(--th-lilacDark)">
+                        เข้าสู่ระบบหลังบ้าน
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5.6 Confirm Action Modal (Replaces native confirm) -->
+        <div id="confirm-action-modal" class="modal-overlay z-[130]">
+            <div class="modal-content bg-white w-[85%] max-w-[300px] rounded-[30px] p-5 shadow-2xl text-center border-2" style="border-color: var(--th-lilac)">
+                <div class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h4 class="font-cute font-bold text-sm mb-1" style="color: var(--th-lilacDark)" id="confirm-modal-title">ยืนยันการลบข้อมูล</h4>
+                <p class="font-sans text-[11px] text-gray-500 mb-4" id="confirm-modal-desc">คุณต้องการลบรายการนี้ใช่หรือไม่?</p>
+                <div class="flex gap-2 font-sans text-xs">
+                    <button onclick="closeConfirmModal()" class="flex-1 py-2 rounded-xl border border-gray-200 text-gray-500 font-bold btn-press">ยกเลิก</button>
+                    <button id="confirm-modal-yes-btn" class="flex-1 py-2 rounded-xl bg-red-500 text-white font-bold btn-press">ยืนยันลบ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Admin Dashboard -->
+        <div id="admin-modal" class="slide-modal" style="height: 90%; top: auto; background-color: #f9fafb;">
+            <div class="pt-6 pb-4 px-6 bg-white rounded-t-[40px] shadow-sm flex items-center justify-between z-20 relative border-b border-gray-100">
+                <div>
+                    <h2 class="font-cute font-bold text-xl flex items-center gap-2" style="color: var(--th-lilacDark)">
+                        <i class="fa-solid fa-lock" style="color: var(--th-mintMid)"></i> ระบบหลังบ้าน
+                    </h2>
+                    <p id="admin-user-badge" class="text-[9px] font-sans text-gray-400 mt-0.5"></p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="handleAdminLogout()" class="px-2.5 py-1.5 rounded-full text-[10px] font-sans font-bold text-red-500 bg-red-50 hover:bg-red-100 btn-press border border-red-100" title="ออกจากระบบแอดมิน">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i>ออก
+                    </button>
+                    <button onclick="closeAdmin()" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 btn-press border bg-gray-50"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+            </div>
+            <div class="flex border-b border-gray-200 bg-white font-sans text-xs z-10 relative px-2">
+                <button onclick="switchAdminTab('reviews')" id="tab-reviews" class="flex-1 py-3 font-bold border-b-2 transition-colors" style="color: var(--th-lilacDark); border-color: var(--th-lilacDark)">รีวิว & ปัญหา</button>
+                <button onclick="switchAdminTab('highlights')" id="tab-highlights" class="flex-1 py-3 text-gray-400 border-b-2 border-transparent transition-colors">ไฮไลท์</button>
+                <button onclick="switchAdminTab('settings')" id="tab-settings" class="flex-1 py-3 text-gray-400 border-b-2 border-transparent transition-colors">ตั้งค่าร้าน</button>
+            </div>
+            <div class="flex-1 overflow-y-auto font-sans relative p-4 space-y-4">
+                
+                <!-- TAB: REVIEWS -->
+                <div id="admin-reviews" class="space-y-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-sm font-bold mb-3" style="color: var(--th-lilacDark)"><i class="fa-solid fa-heart-crack text-xs"></i> ปัญหา (-1)</h3>
+                        <div id="admin-complaints-list" class="space-y-3"></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-sm font-bold mb-3" style="color: var(--th-mintMid)"><i class="fa-solid fa-heart text-xs"></i> รีวิวหน้าร้าน (+1)</h3>
+                        <div id="admin-public-reviews" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: HIGHLIGHTS -->
+                <div id="admin-highlights" class="hidden space-y-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 id="hl-form-title" class="text-sm font-bold mb-3" style="color: var(--th-lilacDark)">เพิ่ม/แก้ไข ไฮไลท์</h3>
+                        <input type="hidden" id="edit-hl-id" value="">
+                        <input type="text" id="new-hl-title" placeholder="ชื่อไฮไลท์" class="w-full border rounded-xl p-3 text-xs mb-3 focus:outline-none bg-gray-50 border-gray-200">
+                        <textarea id="new-hl-imgs" placeholder="ลิงก์รูป (1 บรรทัด = 1 รูป)" class="w-full border rounded-xl p-3 text-xs mb-3 h-20 resize-none focus:outline-none bg-gray-50 border-gray-200"></textarea>
+                        <div class="flex gap-2">
+                            <button onclick="saveHighlight()" id="btn-save-hl" class="flex-1 py-2.5 rounded-xl text-xs font-bold text-gray-800 btn-press" style="background-color: var(--th-mintMid)">บันทึก</button>
+                            <button onclick="cancelEditHighlight()" id="btn-cancel-hl" class="hidden flex-1 bg-white py-2.5 rounded-xl text-xs font-bold text-gray-500 border border-gray-200 btn-press">ยกเลิก</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 px-1">ไฮไลท์ปัจจุบัน</h3>
+                        <div id="admin-hl-list" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: SETTINGS -->
+                <div id="admin-settings" class="hidden space-y-4 pb-10">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        
+                        <!-- Theme Selection -->
+                        <h3 class="text-sm font-bold mb-1" style="color: var(--th-lilacDark)">เลือกโทนสีร้าน</h3>
+                        <p class="text-[9px] text-gray-400 mb-2">* เปลี่ยนสีแชท ปุ่ม และพื้นหลังอัตโนมัติ</p>
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <button onclick="changeTheme('custom')" class="py-2.5 rounded-xl text-[10px] font-bold border btn-press" style="background:#EAF6FF; border-color:#1E6091; color:#1E6091">ฟ้า-ขาว (Zenix)</button>
+                            <button onclick="changeTheme('default')" class="py-2.5 rounded-xl text-[10px] font-bold border btn-press" style="background:#FDF0F5; border-color:#8B6BB1; color:#8B6BB1">ชมพู-ม่วง</button>
+                            <button onclick="changeTheme('pinkBlue')" class="py-2.5 rounded-xl text-[10px] font-bold border btn-press" style="background:#FFF0F5; border-color:#D81B60; color:#D81B60">ชมพู-ฟ้า</button>
+                            <button onclick="changeTheme('peach')" class="py-2.5 rounded-xl text-[10px] font-bold border btn-press" style="background:#FFF5E6; border-color:#D2691E; color:#D2691E">พีช-เหลือง</button>
+                        </div>
+
+                        <!-- Custom Colors -->
+                        <h3 class="text-sm font-bold mb-1 mt-4" style="color: var(--th-lilacDark)">ตั้งค่าสีเอง (Custom Colors)</h3>
+                        <div class="grid grid-cols-2 gap-3 mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] text-gray-600 font-bold">สีพื้นนอกเว็บ</label>
+                                <input type="color" id="c-bg" class="w-full h-8 rounded cursor-pointer border border-gray-300">
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] text-gray-600 font-bold">สีพื้นมือถือ</label>
+                                <input type="color" id="c-phone" class="w-full h-8 rounded cursor-pointer border border-gray-300">
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] text-gray-600 font-bold">สีหลัก (ข้อความ/กรอบ)</label>
+                                <input type="color" id="c-main" class="w-full h-8 rounded cursor-pointer border border-gray-300">
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] text-gray-600 font-bold">สีรอง (ปุ่ม/ตกแต่ง)</label>
+                                <input type="color" id="c-sub" class="w-full h-8 rounded cursor-pointer border border-gray-300">
+                            </div>
+                        </div>
+
+                        <hr class="my-4 border-gray-100">
+                        
+                        <h3 class="text-sm font-bold mb-1" style="color: var(--th-lilacDark)">ข้อความวิ่งหน้าร้าน (Marquee)</h3>
+                        <input type="text" id="set-marquee" placeholder="พิมพ์ข้อความวิ่งที่นี่" class="w-full border rounded-xl p-3 text-xs mb-4 focus:outline-none bg-gray-50 border-gray-200">
+
+                        <h3 class="text-sm font-bold mb-1" style="color: var(--th-lilacDark)">รูปแบบแบนเนอร์ร้าน</h3>
+                        <p class="text-[9px] text-red-500 font-bold mb-2">* แนะนำให้ใช้รูปที่มีขนาดและสัดส่วน 828 x 828 px (1:1) เพื่อความสวยงามพอดีกับกรอบมากที่สุด</p>
+                        <input type="text" id="set-banner" placeholder="ลิงก์รูปแบนเนอร์ URL" class="w-full border rounded-xl p-3 text-xs mb-4 focus:outline-none bg-gray-50 border-gray-200">
+                        
+                        <h3 class="text-sm font-bold mb-3" style="color: var(--th-lilacDark)">ช่องทางการติดต่อ (ใส่ - หากยังไม่มีลิงก์)</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="set-fb" placeholder="ลิงก์ Facebook หรือ -" class="w-full border rounded-xl p-3 text-xs focus:outline-none bg-gray-50 border-gray-200">
+                            <input type="text" id="set-ig" placeholder="ลิงก์ Instagram หรือ -" class="w-full border rounded-xl p-3 text-xs focus:outline-none bg-gray-50 border-gray-200">
+                            <input type="text" id="set-line" placeholder="ลิงก์ Line หรือ -" class="w-full border rounded-xl p-3 text-xs focus:outline-none bg-gray-50 border-gray-200">
+                        </div>
+                        
+                        <button id="btn-save-settings" onclick="saveSettings()" class="w-full text-white py-3 rounded-xl text-sm font-bold mt-4 shadow-sm btn-press" style="background-color: var(--th-lilacDark)">บันทึกการตั้งค่า</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- -------------------------------------
+         10. JAVASCRIPT LOGIC (SUPABASE CONNECTED)
+         ------------------------------------- -->
+    <script>
+        // ============================================================================
+        // SUPABASE CONFIGURATION (Zenix Project)
+        // ============================================================================
+        const SUPABASE_URL = 'https://cdzcxfabcmmphprtycij.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_6vSVmOZvrH9nu5I1meOP-A_zPtKtyrd';
+        const PRIMARY_ADMIN_UID = 'f7978cff-02ab-4c27-99ae-1faba21c80d2';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+        const THEMES = {
+            default: { bg: '#FDF0F5', phoneBg: '#FFF7FC', main: '#8B6BB1', sub: '#EDB9D6' },
+            pinkBlue: { bg: '#FFF0F5', phoneBg: '#FFFAFA', main: '#D81B60', sub: '#80DEEA' },
+            peach: { bg: '#FFF5E6', phoneBg: '#FFFAF0', main: '#D2691E', sub: '#98FB98' }
+        };
+
+        const ZENIX_BLUE_WHITE = {
+            bg: '#EAF6FF',
+            phoneBg: '#F8FCFF',
+            main: '#1E6091',
+            sub: '#74C0FC'
+        };
+
+        // สถานะข้อมูลหลักของแอปพลิเคชัน (ซิงก์จากฐานข้อมูล Supabase)
+        let appData = {
+            shopName: 'Zenix',
+            theme: 'custom',
+            customColors: { ...ZENIX_BLUE_WHITE },
+            marqueeText: 'ยินดีต้อนรับสู่ร้าน Zenix ค่ะ 💙 ขอบคุณทุกรีวิวที่น่ารักนะคะ ✨',
+            logo: 'https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg',
+            banner: 'https://i.postimg.cc/C1CVhhPf/att-TE9udc-PMd47FL6hk-h5q-BXj3Bf7U7Q2quu-WJOTCPfy-Q.jpg',
+            contacts: { fb: '-', ig: '-', line: '-' },
+            highlights: [],
+            reviews: [],
+            complaints: []
+        };
+
+        let isAdminVerified = false;
+        let currentAdminEmail = '';
+        let reviewQueue = [];
+        let chatIndex = 0;
+        let isChatRunning = false;
+        let isUserInteracting = false;
+
+        // ฟังก์ชันแสดงข้อความแจ้งเตือนแบบน่ารัก (แทนการใช้ alert)
+        function showToast(message, isError = false) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast-item';
+            if (isError) {
+                toast.style.borderColor = '#FCA5A5';
+                toast.style.color = '#DC2626';
+            }
+            toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation text-red-500' : 'fa-circle-check'}" style="${isError ? '' : 'color: var(--th-mintMid)'}"></i><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        // ฟังก์ชันยืนยันการลบแบบ Modal (แทนการใช้ confirm)
+        let pendingConfirmCallback = null;
+        function openConfirmModal(title, desc, onConfirm) {
+            document.getElementById('confirm-modal-title').innerText = title || 'ยืนยันการทำรายการ';
+            document.getElementById('confirm-modal-desc').innerText = desc || 'คุณต้องการดำเนินการต่อใช่หรือไม่?';
+            pendingConfirmCallback = onConfirm;
+            document.getElementById('confirm-action-modal').classList.add('active');
+        }
+        function closeConfirmModal() {
+            document.getElementById('confirm-action-modal').classList.remove('active');
+            pendingConfirmCallback = null;
+        }
+        document.getElementById('confirm-modal-yes-btn').addEventListener('click', async () => {
+            const cb = pendingConfirmCallback;
+            closeConfirmModal();
+            if (typeof cb === 'function') {
+                await cb();
+            }
+        });
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function formatRelativeTime(isoDateString) {
+            if (!isoDateString) return 'เมื่อสักครู่';
+            const created = new Date(isoDateString);
+            if (isNaN(created.getTime())) return 'เมื่อสักครู่';
+            const diffSec = Math.floor((Date.now() - created.getTime()) / 1000);
+            if (diffSec < 60) return 'เมื่อสักครู่';
+            const diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return `${diffMin} นาทีที่แล้ว`;
+            const diffHr = Math.floor(diffMin / 60);
+            if (diffHr < 24) return `${diffHr} ชั่วโมงที่แล้ว`;
+            const diffDay = Math.floor(diffHr / 24);
+            if (diffDay < 30) return `${diffDay} วันที่แล้ว`;
+            return created.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+        }
+
+        function applyColors(bg, phoneBg, main, sub) {
+            document.documentElement.style.setProperty('--th-bg', bg);
+            document.documentElement.style.setProperty('--th-phoneBg', phoneBg);
+            document.documentElement.style.setProperty('--th-lilacDark', main);
+            document.documentElement.style.setProperty('--th-mintMid', sub);
+            
+            document.documentElement.style.setProperty('--th-lilac', main + '33'); 
+            document.documentElement.style.setProperty('--th-lilacMid', main + '80'); 
+            document.documentElement.style.setProperty('--th-mint', sub + '40'); 
+            document.documentElement.style.setProperty('--th-pinkSoft', '#CFE8FF'); 
+            
+            const iconBg = document.getElementById('marquee-icon-bg');
+            const iconColor = document.getElementById('marquee-icon-color');
+            if (iconBg) iconBg.style.backgroundColor = main + '33';
+            if (iconColor) iconColor.style.color = main;
+        }
+
+        function loadTheme() {
+            if (appData.theme === 'custom') {
+                const c = appData.customColors || ZENIX_BLUE_WHITE;
+                applyColors(c.bg, c.phoneBg, c.main, c.sub);
+            } else {
+                const t = THEMES[appData.theme] || ZENIX_BLUE_WHITE;
+                applyColors(t.bg, t.phoneBg, t.main, t.sub);
+            }
+        }
+
+        function applyShopUI() {
+            loadTheme();
+            document.getElementById('app-banner').src = appData.banner;
+            document.getElementById('preloader-logo-img').src = appData.logo || appData.banner;
+            document.getElementById('story-shop-logo').src = appData.logo || appData.banner;
+            document.getElementById('preloader-shop-name').innerText = appData.shopName || 'Zenix';
+            document.getElementById('story-shop-name').innerText = appData.shopName || 'Zenix';
+            document.getElementById('marquee-display').textContent = appData.marqueeText;
+            renderContacts();
+            updateReviewCount();
+        }
+
+        // โหลดข้อมูลสาธารณะทั้งหมดจาก Supabase (ตั้งค่าร้าน, ไฮไลท์, รีวิวหน้าร้าน)
+        async function fetchPublicDataFromSupabase() {
+            try {
+                const [settingsRes, highlightsRes, reviewsRes] = await Promise.all([
+                    supabaseClient.from('shop_settings').select('*').eq('id', 1).maybeSingle(),
+                    supabaseClient.from('highlights').select('*').order('sort_order', { ascending: true }).order('id', { ascending: true }),
+                    supabaseClient.from('reviews').select('*').order('created_at', { ascending: true }).order('id', { ascending: true })
+                ]);
+
+                if (settingsRes.data) {
+                    const s = settingsRes.data;
+                    appData.shopName = s.shop_name || 'Zenix';
+                    appData.theme = s.theme || 'custom';
+                    if (s.custom_colors && typeof s.custom_colors === 'object') {
+                        appData.customColors = {
+                            bg: s.custom_colors.bg || ZENIX_BLUE_WHITE.bg,
+                            phoneBg: s.custom_colors.phoneBg || ZENIX_BLUE_WHITE.phoneBg,
+                            main: s.custom_colors.main || ZENIX_BLUE_WHITE.main,
+                            sub: s.custom_colors.sub || ZENIX_BLUE_WHITE.sub
+                        };
+                    }
+                    appData.marqueeText = s.marquee_text || appData.marqueeText;
+                    appData.logo = s.logo_url || appData.logo;
+                    appData.banner = s.banner_url || appData.banner;
+                    appData.contacts = {
+                        fb: s.contact_fb || '-',
+                        ig: s.contact_ig || '-',
+                        line: s.contact_line || '-'
+                    };
+                }
+
+                if (Array.isArray(highlightsRes.data)) {
+                    appData.highlights = highlightsRes.data.map(h => ({
+                        id: h.id,
+                        title: h.title,
+                        imgs: Array.isArray(h.imgs) ? h.imgs : []
+                    }));
+                }
+
+                if (Array.isArray(reviewsRes.data)) {
+                    appData.reviews = reviewsRes.data.map((r, idx) => ({
+                        id: r.id,
+                        name: r.name,
+                        text: r.text,
+                        stars: r.stars || 5,
+                        img: r.img || null,
+                        time: formatRelativeTime(r.created_at),
+                        isRight: typeof r.is_right === 'boolean' ? r.is_right : (idx % 2 !== 0)
+                    }));
+                }
+
+                applyShopUI();
+            } catch (err) {
+                console.error('Error loading public data from Supabase:', err);
+                applyShopUI();
+            }
+        }
+
+        window.addEventListener('load', async () => {
+            applyShopUI();
+            await fetchPublicDataFromSupabase();
+            
+            reviewQueue = appData.reviews.slice();
+            chatIndex = 0;
+
+            // Preloader 
+            setTimeout(() => {
+                const preloader = document.getElementById('preloader');
+                preloader.classList.add('hidden-preloader');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                    startChatProcess(); 
+                }, 600);
+            }, 2400);
+        });
+
+        function updateReviewCount() {
+            document.getElementById('review-count-display').textContent = `รีวิวทั้งหมด ${appData.reviews.length} รายการ 💙`;
+        }
+
+        const scrollArea = document.getElementById('main-scroll-area');
+        
+        function smoothScrollToBottom() {
+            if (scrollArea && !isUserInteracting) {
+                scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        if (scrollArea) {
+            const pauseFollowing = () => { isUserInteracting = true; };
+            scrollArea.addEventListener('wheel', pauseFollowing, { passive: true });
+            scrollArea.addEventListener('touchmove', pauseFollowing, { passive: true });
+            scrollArea.addEventListener('pointerdown', pauseFollowing, { passive: true });
+            scrollArea.addEventListener('scroll', () => {
+                if (scrollArea.scrollHeight - scrollArea.clientHeight - scrollArea.scrollTop < 24) {
+                    isUserInteracting = false;
+                }
+            }, { passive: true });
+        }
+        
+        function startChatProcess() {
+            if (chatIndex >= reviewQueue.length) {
+                isChatRunning = false;
+                return; 
+            }
+            isChatRunning = true;
+
+            const container = document.getElementById('chat-container');
+            const spacer = document.getElementById('chat-spacer');
+            const rev = reviewQueue[chatIndex];
+            const isNextRight = rev.isRight;
+            const sideClass = isNextRight ? 'right ml-auto' : 'left';
+            
+            const indicatorDiv = document.createElement('div');
+            indicatorDiv.className = `typing-bubble ${sideClass}`;
+            indicatorDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+            container.insertBefore(indicatorDiv, spacer);
+            
+            setTimeout(() => {
+                indicatorDiv.classList.add('active');
+                smoothScrollToBottom();
+            }, 50);
+
+            const typingDuration = Math.random() * 600 + 900; 
+            
+            setTimeout(() => {
+                indicatorDiv.style.opacity = '0';
+                indicatorDiv.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    indicatorDiv.remove();
+                    const bubble = createReviewBubble(rev);
+                    container.insertBefore(bubble, spacer);
+                    
+                    setTimeout(() => {
+                        bubble.classList.add('animate-chat');
+                        smoothScrollToBottom();
+                    }, 50);
+
+                    chatIndex++;
+                    const nextDelay = Math.random() * 600 + 700;
+                    setTimeout(startChatProcess, nextDelay); 
+                }, 300);
+            }, typingDuration); 
+        }
+
+        const avatarEmojis = ['💙', '❄️', '✨', '💎', '🐳', '☁️', '🦋', '🌊', '🫧', '🎐', '⭐', '🐬', '🧊'];
+
+        function createReviewBubble(review) {
+            const sideClass = review.isRight ? 'bubble-right ml-auto' : 'bubble-left';
+            const numericId = Number(review.id) || 1;
+            const emojiIndex = Math.abs(numericId + (review.name ? review.name.length : 0)) % avatarEmojis.length;
+            const avatarEmoji = avatarEmojis[emojiIndex];
+            const avatarBg = review.isRight
+                ? `background: linear-gradient(to top right, var(--th-mintMid), var(--th-mint))`
+                : `background: linear-gradient(to top right, var(--th-lilacMid), var(--th-pinkSoft))`;
+
+            let starsHTML = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < review.stars) {
+                    starsHTML += `<i class="fa-solid fa-star text-theme-star chat-star" style="animation-delay: ${i * 0.15}s"></i>`;
+                } else {
+                    starsHTML += `<i class="fa-regular fa-star chat-star" style="color: var(--th-lilac); animation-delay: ${i * 0.15}s"></i>`;
+                }
+            }
+
+            const safeName = escapeHtml(review.name);
+            const safeText = escapeHtml(review.text);
+            const safeTime = escapeHtml(review.time || 'เมื่อสักครู่');
+            let imgHTML = '';
+            if (review.img && review.img.trim() !== '') {
+                const safeImg = escapeHtml(review.img.trim());
+                imgHTML = `<div class="mt-3 overflow-hidden rounded-2xl border-2 shadow-sm" style="border-color: var(--th-bg)"><img src="${safeImg}" class="w-full h-32 object-cover" onerror="this.parentElement.style.display='none'"></div>`;
+            }
+
+            const div = document.createElement('div');
+            div.className = `review-bubble ${sideClass}`;
+            div.dataset.reviewId = review.id;
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center text-[16px] shadow-sm border border-white" style="${avatarBg}">${avatarEmoji}</div>
+                        <div>
+                            <h4 class="font-cute font-bold text-[13px] leading-tight" style="color: var(--th-lilacDark)">${safeName}</h4>
+                            <div class="flex text-[9px] gap-[1px] mt-0.5">${starsHTML}</div>
+                        </div>
+                    </div>
+                    <span class="text-[8px] text-theme-textMuted font-sans px-2 py-1 rounded-full border" style="background-color: var(--th-bg); border-color: var(--th-lilac)">${safeTime}</span>
+                </div>
+                <p class="text-xs font-sans text-theme-textMain leading-relaxed mt-1.5 break-words">${safeText}</p>
+                ${imgHTML}
+            `;
+            return div;
+        }
+
+        function isValidContactUrl(val) {
+            if (!val) return false;
+            const trimmed = val.trim();
+            return trimmed !== '' && trimmed !== '-' && trimmed !== '#';
+        }
+
+        function renderContacts() {
+            const container = document.getElementById('contact-links-container');
+            const items = [
+                {
+                    label: 'LINE Official',
+                    url: appData.contacts.line,
+                    glow: '#00C300',
+                    iconBg: 'linear-gradient(135deg, #00C300, #00E000)',
+                    iconClass: 'fa-brands fa-line'
+                },
+                {
+                    label: 'Instagram',
+                    url: appData.contacts.ig,
+                    glow: '#e6683c',
+                    iconBg: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                    iconClass: 'fa-brands fa-instagram'
+                },
+                {
+                    label: 'Facebook',
+                    url: appData.contacts.fb,
+                    glow: '#1877F2',
+                    iconBg: 'linear-gradient(135deg, #1877F2, #4693F5)',
+                    iconClass: 'fa-brands fa-facebook-f'
+                }
+            ];
+
+            container.innerHTML = items.map(item => {
+                const valid = isValidContactUrl(item.url);
+                if (valid) {
+                    const safeHref = escapeHtml(item.url.trim());
+                    return `
+                        <a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="contact-link-btn group relative z-10 bg-white/90">
+                            <div class="glow-bg" style="background: ${item.glow};"></div>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-inner mr-4 transition-transform group-hover:scale-110" style="background: ${item.iconBg};"><i class="${item.iconClass} text-xl"></i></div>
+                            <span class="font-sans font-bold text-sm text-gray-700 flex-1">${item.label}</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-400"></i>
+                        </a>
+                    `;
+                } else {
+                    return `
+                        <button type="button" onclick="showToast('ช่องทาง ${item.label} ยังไม่ได้ระบุลิงก์ค่ะ')" class="contact-link-btn w-full text-left group relative z-10 bg-white/80 opacity-75">
+                            <div class="glow-bg" style="background: ${item.glow}; opacity: 0.18;"></div>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-inner mr-4" style="background: ${item.iconBg};"><i class="${item.iconClass} text-xl"></i></div>
+                            <div class="flex-1">
+                                <span class="font-sans font-bold text-sm text-gray-700 block">${item.label}</span>
+                                <span class="font-sans text-[10px] text-gray-400">ยังไม่ได้ระบุลิงก์ (-)</span>
+                            </div>
+                        </button>
+                    `;
+                }
+            }).join('');
+        }
+
+        function openModal(id) { 
+            document.getElementById(id).classList.add('active'); 
+            if (id === 'plus-modal') {
+                document.getElementById('plus-name').value = '';
+                document.getElementById('plus-text').value = '';
+                document.getElementById('plus-img').value = '';
+                document.getElementById('plus-error').classList.add('hidden');
+                setStar(5);
+            }
+            if (id === 'minus-modal') {
+                ['min-fb', 'min-ig', 'min-line', 'min-x', 'min-text'].forEach(i => document.getElementById(i).value = '');
+                document.getElementById('minus-error').classList.add('hidden');
+            }
+        }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        let currentStoryIndex = 0;
+        let storyTimeout;
+        let activeStoryList = [];
+
+        function openHighlightGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+            if (!appData.highlights || appData.highlights.length === 0) {
+                container.innerHTML = `<div class="w-full text-center py-10 text-xs text-gray-400 font-sans">ยังไม่มีไฮไลท์ในขณะนี้ค่ะ ✨</div>`;
+            } else {
+                appData.highlights.forEach((hl, index) => {
+                    const coverImg = (hl.imgs && hl.imgs[0]) ? hl.imgs[0] : appData.logo;
+                    const circle = document.createElement('div');
+                    circle.className = 'flex flex-col items-center gap-1.5 w-[65px] group';
+                    circle.innerHTML = `
+                        <div class="w-16 h-16 rounded-full p-1 cursor-pointer group-hover:scale-105 transition-transform border-[2px]" style="border-color: var(--th-mintMid)" onclick="openStoryViewer(${index})">
+                            <img src="${escapeHtml(coverImg)}" class="w-full h-full rounded-full object-cover border-2 border-white">
+                        </div>
+                        <span class="text-[9px] font-sans font-medium text-theme-textMain truncate w-full text-center bg-white/50 rounded-full px-1 py-0.5 border border-white/50">${escapeHtml(hl.title)}</span>
+                    `;
+                    container.appendChild(circle);
+                });
+            }
+            document.getElementById('highlight-gallery-bg').classList.add('active');
+            document.getElementById('highlight-gallery-modal').classList.add('active');
+        }
+        function closeHighlightGallery() { 
+            document.getElementById('highlight-gallery-bg').classList.remove('active');
+            document.getElementById('highlight-gallery-modal').classList.remove('active'); 
+        }
+
+        function openStoryViewer(index) {
+            if (!appData.highlights[index]) return;
+            activeStoryList = appData.highlights[index].imgs || [];
+            if (activeStoryList.length === 0) return;
+            document.getElementById('story-text-title').innerText = appData.highlights[index].title;
+            document.getElementById('story-modal').classList.add('active');
+            playStory(0);
+        }
+
+        function playStory(index) {
+            clearTimeout(storyTimeout);
+            currentStoryIndex = index;
+            document.getElementById('story-img').src = activeStoryList[index];
+
+            const progContainer = document.getElementById('story-progress-container');
+            progContainer.innerHTML = activeStoryList.map((_, i) => `<div class="story-progress-bar"><div id="story-prog-${i}" class="story-progress-fill"></div></div>`).join('');
+
+            for (let i = 0; i < activeStoryList.length; i++) {
+                const bar = document.getElementById(`story-prog-${i}`);
+                if (i < index) bar.classList.add('completed');
+                else if (i === index) { void bar.offsetWidth; bar.classList.add('active'); }
+            }
+            storyTimeout = setTimeout(nextStory, 4000);
+        }
+        function nextStory() { if (currentStoryIndex < activeStoryList.length - 1) playStory(currentStoryIndex + 1); else closeStory(); }
+        function closeStory(e) { if (e) e.stopPropagation(); document.getElementById('story-modal').classList.remove('active'); clearTimeout(storyTimeout); }
+
+        let currentPlusStar = 5;
+        function setStar(count) {
+            currentPlusStar = count;
+            const stars = document.getElementById('plus-stars').children;
+            for (let i = 0; i < 5; i++) {
+                stars[i].classList.remove('star-anim-active');
+                void stars[i].offsetWidth;
+
+                if (i < count) {
+                    stars[i].className = 'fa-solid fa-star cursor-pointer hover:scale-125 text-theme-star transition-transform star-anim-active';
+                    stars[i].style.color = '';
+                } else {
+                    stars[i].className = 'fa-solid fa-star cursor-pointer hover:scale-125 transition-transform'; 
+                    stars[i].style.color = 'var(--th-lilac)'; 
+                }
+            }
+        }
+
+        // ส่งรีวิวหน้าร้าน (+1) บันทึกลงตาราง public.reviews
+        async function submitPlusReview() {
+            const name = document.getElementById('plus-name').value.trim();
+            const text = document.getElementById('plus-text').value.trim();
+            const img = document.getElementById('plus-img').value.trim();
+            const errEl = document.getElementById('plus-error');
+
+            if (!name || !text) {
+                errEl.textContent = 'กรุณากรอกชื่อและข้อความรีวิวให้ครบถ้วนค่ะ';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-plus');
+            btn.disabled = true;
+            btn.textContent = 'กำลังบันทึก...';
+
+            const isRightSide = appData.reviews.length % 2 !== 0;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('reviews')
+                    .insert([{
+                        name,
+                        text,
+                        stars: currentPlusStar,
+                        img: img || null,
+                        is_right: isRightSide
+                    }])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                const newRev = {
+                    id: data.id,
+                    name: data.name,
+                    text: data.text,
+                    stars: data.stars,
+                    img: data.img,
+                    time: 'เมื่อสักครู่',
+                    isRight: data.is_right
+                };
+
+                appData.reviews.push(newRev);
+                updateReviewCount();
+                closeModal('plus-modal');
+                showToast('ขอบคุณสำหรับรีวิวน่ารักๆ นะคะ 💙');
+
+                if (isChatRunning || chatIndex < reviewQueue.length) {
+                    reviewQueue.push(newRev);
+                    if (!isChatRunning) startChatProcess();
+                } else {
+                    reviewQueue.push(newRev);
+                    chatIndex = reviewQueue.length;
+                    const container = document.getElementById('chat-container');
+                    const spacer = document.getElementById('chat-spacer');
+                    const indicatorDiv = document.createElement('div');
+                    indicatorDiv.className = `typing-bubble ${newRev.isRight ? 'right ml-auto' : 'left'}`;
+                    indicatorDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+                    container.insertBefore(indicatorDiv, spacer);
+                    
+                    setTimeout(() => { indicatorDiv.classList.add('active'); smoothScrollToBottom(); }, 50);
+                    setTimeout(() => {
+                        indicatorDiv.style.opacity = '0';
+                        indicatorDiv.style.transform = 'translateY(10px)';
+                        setTimeout(() => {
+                            const bubble = createReviewBubble(newRev);
+                            indicatorDiv.replaceWith(bubble);
+                            setTimeout(() => { bubble.classList.add('animate-chat'); smoothScrollToBottom(); }, 50);
+                        }, 300);
+                    }, 1200);
+                }
+            } catch (err) {
+                console.error('Submit review error:', err);
+                errEl.textContent = err.message || 'ไม่สามารถส่งรีวิวได้ กรุณาลองใหม่อีกครั้งค่ะ';
+                errEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'โพสต์รีวิว';
+            }
+        }
+
+        // ส่งเรื่องแจ้งปัญหา (-1) ผ่าน Server-side RPC public.submit_complaint
+        async function submitMinusReview() {
+            const fb = document.getElementById('min-fb').value.trim();
+            const ig = document.getElementById('min-ig').value.trim();
+            const line = document.getElementById('min-line').value.trim();
+            const x = document.getElementById('min-x').value.trim();
+            const text = document.getElementById('min-text').value.trim();
+            const errEl = document.getElementById('minus-error');
+
+            if (!fb || !ig || !line || !x || !text) {
+                errEl.textContent = 'กรุณากรอกข้อมูลให้ครบทุกช่องค่ะ';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-minus');
+            btn.disabled = true;
+            btn.textContent = 'กำลังส่งข้อมูล...';
+
+            try {
+                const { error } = await supabaseClient.rpc('submit_complaint', {
+                    p_fb: fb,
+                    p_ig: ig,
+                    p_line: line,
+                    p_x: x,
+                    p_text: text
+                });
+
+                if (error) throw error;
+
+                closeModal('minus-modal');
+                showToast('ส่งเรื่องให้แอดมินตรวจสอบเรียบร้อยค่ะ');
+            } catch (err) {
+                console.error('Submit complaint error:', err);
+                errEl.textContent = err.message || 'เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้งค่ะ';
+                errEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'ส่งให้แอดมินตรวจสอบ';
+            }
+        }
+
+        // ตรวจสอบสิทธิ์แอดมินจาก Supabase Session + ตาราง public.admin_users + UID จริง
+        async function verifyCurrentAdminSession() {
+            try {
+                const { data: { session }, error: sessionErr } = await supabaseClient.auth.getSession();
+                if (sessionErr || !session || !session.user) {
+                    isAdminVerified = false;
+                    return false;
+                }
+
+                const user = session.user;
+                // ตรวจกับตาราง admin_users ในฐานข้อมูล (ซึ่งบังคับด้วย RLS auth.uid() = user_id)
+                const { data: adminRecord, error: adminErr } = await supabaseClient
+                    .from('admin_users')
+                    .select('user_id, email, role')
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+
+                if (adminErr || !adminRecord) {
+                    isAdminVerified = false;
+                    return false;
+                }
+
+                // ตรวจสอบตรงกับ UID แอดมินหลักที่กำหนดไว้
+                if (user.id.toLowerCase() !== PRIMARY_ADMIN_UID.toLowerCase()) {
+                    isAdminVerified = false;
+                    return false;
+                }
+
+                isAdminVerified = true;
+                currentAdminEmail = adminRecord.email || user.email || '';
+                const badge = document.getElementById('admin-user-badge');
+                if (badge) badge.textContent = `แอดมิน: ${currentAdminEmail}`;
+                return true;
+            } catch (err) {
+                console.error('Admin verification failed:', err);
+                isAdminVerified = false;
+                return false;
+            }
+        }
+
+        async function openAdmin() {
+            const ok = await verifyCurrentAdminSession();
+            if (!ok) {
+                document.getElementById('admin-login-error').classList.add('hidden');
+                document.getElementById('admin-password-input').value = '';
+                openModal('admin-login-modal');
+                return;
+            }
+            await fetchAdminComplaints();
+            document.getElementById('admin-modal').classList.add('active');
+            switchAdminTab('reviews');
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-modal').classList.remove('active');
+        }
+
+        async function handleAdminLogin() {
+            const email = document.getElementById('admin-email-input').value.trim();
+            const password = document.getElementById('admin-password-input').value;
+            const errEl = document.getElementById('admin-login-error');
+            const btn = document.getElementById('btn-admin-login');
+
+            if (!email || !password) {
+                errEl.textContent = 'กรุณากรอกอีเมลและรหัสผ่านแอดมินค่ะ';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'กำลังตรวจสอบสิทธิ์...';
+            errEl.classList.add('hidden');
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
+                const verified = await verifyCurrentAdminSession();
+                if (!verified) {
+                    await supabaseClient.auth.signOut();
+                    throw new Error('บัญชีนี้ไม่มีสิทธิ์แอดมินหลักของร้าน Zenix ค่ะ');
+                }
+
+                closeModal('admin-login-modal');
+                showToast('เข้าสู่ระบบแอดมินสำเร็จค่ะ 💙');
+                await fetchAdminComplaints();
+                document.getElementById('admin-modal').classList.add('active');
+                switchAdminTab('reviews');
+            } catch (err) {
+                console.error('Admin login error:', err);
+                errEl.textContent = err.message === 'Invalid login credentials'
+                    ? 'อีเมลหรือรหัสผ่านไม่ถูกต้องค่ะ'
+                    : (err.message || 'ไม่สามารถเข้าสู่ระบบได้');
+                errEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'เข้าสู่ระบบหลังบ้าน';
+            }
+        }
+
+        async function handleAdminLogout() {
+            await supabaseClient.auth.signOut();
+            isAdminVerified = false;
+            currentAdminEmail = '';
+            appData.complaints = [];
+            closeAdmin();
+            showToast('ออกจากระบบแอดมินเรียบร้อยค่ะ');
+        }
+
+        async function fetchAdminComplaints() {
+            if (!isAdminVerified) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('complaints')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                appData.complaints = (data || []).map(c => ({
+                    id: c.id,
+                    fb: c.fb,
+                    ig: c.ig,
+                    line: c.line_id,
+                    x: c.x_handle,
+                    text: c.text,
+                    createdAt: c.created_at
+                }));
+            } catch (err) {
+                console.error('Error fetching complaints:', err);
+            }
+        }
+
+        async function changeTheme(themeName) {
+            if (!isAdminVerified) return;
+            appData.theme = themeName;
+            if (themeName === 'custom') {
+                appData.customColors = { ...ZENIX_BLUE_WHITE };
+                document.getElementById('c-bg').value = appData.customColors.bg;
+                document.getElementById('c-phone').value = appData.customColors.phoneBg;
+                document.getElementById('c-main').value = appData.customColors.main;
+                document.getElementById('c-sub').value = appData.customColors.sub;
+            }
+            loadTheme();
+
+            try {
+                const { error } = await supabaseClient
+                    .from('shop_settings')
+                    .update({
+                        theme: appData.theme,
+                        custom_colors: appData.customColors,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', 1);
+                if (error) throw error;
+                showToast('เปลี่ยนโทนสีเรียบร้อยแล้วค่ะ 💙');
+            } catch (err) {
+                console.error('Error updating theme:', err);
+                showToast('บันทึกโทนสีไม่สำเร็จ: ' + err.message, true);
+            }
+        }
+
+        function switchAdminTab(tab) {
+            ['reviews', 'highlights', 'settings'].forEach(t => {
+                document.getElementById(`admin-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = 'flex-1 py-3 text-gray-400 border-b-2 border-transparent transition-colors';
+                document.getElementById(`tab-${t}`).style = '';
+            });
+            document.getElementById(`admin-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = 'flex-1 py-3 font-bold border-b-2 transition-colors';
+            document.getElementById(`tab-${tab}`).style = 'color: var(--th-lilacDark); border-color: var(--th-lilacDark)';
+
+            if (tab === 'reviews') {
+                renderAdminReviewsAndComplaints();
+            }
+            if (tab === 'highlights') {
+                renderAdminHighlights();
+            }
+            if (tab === 'settings') {
+                document.getElementById('set-marquee').value = appData.marqueeText;
+                document.getElementById('set-banner').value = appData.banner;
+                document.getElementById('set-fb').value = appData.contacts.fb;
+                document.getElementById('set-ig').value = appData.contacts.ig;
+                document.getElementById('set-line').value = appData.contacts.line;
+                
+                document.getElementById('c-bg').value = appData.customColors.bg;
+                document.getElementById('c-phone').value = appData.customColors.phoneBg;
+                document.getElementById('c-main').value = appData.customColors.main;
+                document.getElementById('c-sub').value = appData.customColors.sub;
+            }
+        }
+
+        function renderAdminReviewsAndComplaints() {
+            const compContainer = document.getElementById('admin-complaints-list');
+            if (!appData.complaints || appData.complaints.length === 0) {
+                compContainer.innerHTML = '<p class="text-xs text-center text-gray-400 py-4">ไม่มีข้อมูล</p>';
+            } else {
+                compContainer.innerHTML = appData.complaints.map(c => `
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 text-[10px] relative">
+                        <button onclick="deleteComplaint(${c.id})" class="text-gray-400 hover:text-red-500 float-right p-1" title="ลบรายการแจ้งปัญหา"><i class="fa-solid fa-trash"></i></button>
+                        <p class="text-xs font-bold mb-1 text-red-500 pr-6 break-words">${escapeHtml(c.text)}</p>
+                        <div class="text-gray-600 leading-relaxed">
+                            FB: ${escapeHtml(c.fb)} | IG: ${escapeHtml(c.ig)}<br>
+                            Line: ${escapeHtml(c.line)} | X: ${escapeHtml(c.x)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const revContainer = document.getElementById('admin-public-reviews');
+            if (!appData.reviews || appData.reviews.length === 0) {
+                revContainer.innerHTML = '<p class="text-xs text-center text-gray-400 py-4">ไม่มีข้อมูล</p>';
+            } else {
+                revContainer.innerHTML = appData.reviews.slice().reverse().map(r => `
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 flex justify-between gap-2">
+                        <div class="text-[10px] flex-1 min-w-0">
+                            <span class="font-bold text-xs" style="color: var(--th-lilacDark)">${escapeHtml(r.name)}</span> (${r.stars} ดาว)
+                            <span class="text-gray-700 mt-1 block break-words">${escapeHtml(r.text)}</span>
+                        </div>
+                        <button onclick="deletePublicReview(${r.id})" class="text-gray-400 hover:text-red-500 p-1 h-fit" title="ลบรีวิว"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function deleteComplaint(id) {
+            openConfirmModal('ลบรายการแจ้งปัญหา', 'ต้องการลบข้อมูลแจ้งปัญหารายการนี้ใช่หรือไม่?', async () => {
+                try {
+                    const { error } = await supabaseClient.from('complaints').delete().eq('id', id);
+                    if (error) throw error;
+                    appData.complaints = appData.complaints.filter(c => c.id !== id);
+                    renderAdminReviewsAndComplaints();
+                    showToast('ลบรายการแจ้งปัญหาเรียบร้อยค่ะ');
+                } catch (err) {
+                    console.error('Delete complaint error:', err);
+                    showToast('ลบไม่สำเร็จ: ' + err.message, true);
+                }
+            });
+        }
+
+        function deletePublicReview(id) {
+            openConfirmModal('ลบรีวิวหน้าร้าน', 'ต้องการลบรีวิวนี้จากหน้าร้านใช่หรือไม่?', async () => {
+                try {
+                    const { error } = await supabaseClient.from('reviews').delete().eq('id', id);
+                    if (error) throw error;
+                    appData.reviews = appData.reviews.filter(r => r.id !== id);
+                    reviewQueue = reviewQueue.filter(r => r.id !== id);
+                    const domBubble = document.querySelector(`.review-bubble[data-review-id="${id}"]`);
+                    if (domBubble) domBubble.remove();
+                    updateReviewCount();
+                    renderAdminReviewsAndComplaints();
+                    showToast('ลบรีวิวเรียบร้อยแล้วค่ะ');
+                } catch (err) {
+                    console.error('Delete review error:', err);
+                    showToast('ลบรีวิวไม่สำเร็จ: ' + err.message, true);
+                }
+            });
+        }
+
+        function renderAdminHighlights() {
+            const listEl = document.getElementById('admin-hl-list');
+            if (!appData.highlights || appData.highlights.length === 0) {
+                listEl.innerHTML = '<p class="text-xs text-center text-gray-400 py-4">ไม่มีข้อมูล</p>';
+                return;
+            }
+            listEl.innerHTML = appData.highlights.map(hl => `
+                <div class="bg-white p-3 rounded-xl border border-gray-100 flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <img src="${escapeHtml((hl.imgs && hl.imgs[0]) || appData.logo)}" class="w-10 h-10 rounded-full object-cover border border-gray-100">
+                        <div class="text-[10px]">
+                            <span class="font-bold block text-xs" style="color: var(--th-lilacDark)">${escapeHtml(hl.title)}</span>
+                            <span class="text-gray-400">${(hl.imgs || []).length} รูป</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="editHighlight(${hl.id})" class="text-blue-500 hover:text-blue-600 p-2"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteHighlight(${hl.id})" class="text-gray-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editHighlight(id) {
+            const hl = appData.highlights.find(h => h.id === id);
+            if (!hl) return;
+            document.getElementById('edit-hl-id').value = hl.id;
+            document.getElementById('new-hl-title').value = hl.title;
+            document.getElementById('new-hl-imgs').value = (hl.imgs || []).join('\n');
+            document.getElementById('hl-form-title').innerText = 'แก้ไขไฮไลท์';
+            document.getElementById('btn-cancel-hl').classList.remove('hidden');
+        }
+
+        function cancelEditHighlight() {
+            document.getElementById('edit-hl-id').value = '';
+            document.getElementById('new-hl-title').value = '';
+            document.getElementById('new-hl-imgs').value = '';
+            document.getElementById('hl-form-title').innerText = 'เพิ่ม/แก้ไข ไฮไลท์';
+            document.getElementById('btn-cancel-hl').classList.add('hidden');
+        }
+
+        async function saveHighlight() {
+            if (!isAdminVerified) return;
+            const id = document.getElementById('edit-hl-id').value;
+            const title = document.getElementById('new-hl-title').value.trim();
+            const imgsArray = document.getElementById('new-hl-imgs').value.trim().split('\n').map(u => u.trim()).filter(u => u);
+
+            if (!title || imgsArray.length === 0) {
+                showToast('กรุณากรอกชื่อและลิงก์รูปอย่างน้อย 1 รูปค่ะ', true);
+                return;
+            }
+
+            const btn = document.getElementById('btn-save-hl');
+            btn.disabled = true;
+            btn.textContent = 'กำลังบันทึก...';
+
+            try {
+                if (id) {
+                    const { data, error } = await supabaseClient
+                        .from('highlights')
+                        .update({ title, imgs: imgsArray })
+                        .eq('id', Number(id))
+                        .select()
+                        .single();
+                    if (error) throw error;
+
+                    const idx = appData.highlights.findIndex(h => h.id == id);
+                    if (idx > -1) {
+                        appData.highlights[idx] = { id: data.id, title: data.title, imgs: data.imgs };
+                    }
+                    showToast('แก้ไขไฮไลท์เรียบร้อยแล้วค่ะ 💙');
+                } else {
+                    const { data, error } = await supabaseClient
+                        .from('highlights')
+                        .insert([{ title, imgs: imgsArray, sort_order: appData.highlights.length }])
+                        .select()
+                        .single();
+                    if (error) throw error;
+
+                    appData.highlights.push({ id: data.id, title: data.title, imgs: data.imgs });
+                    showToast('เพิ่มไฮไลท์ใหม่เรียบร้อยแล้วค่ะ 💙');
+                }
+                cancelEditHighlight();
+                renderAdminHighlights();
+            } catch (err) {
+                console.error('Save highlight error:', err);
+                showToast('บันทึกไฮไลท์ไม่สำเร็จ: ' + err.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'บันทึก';
+            }
+        }
+
+        function deleteHighlight(id) {
+            openConfirmModal('ลบคลังไฮไลท์', 'ต้องการลบอัลบั้มไฮไลท์นี้ใช่หรือไม่?', async () => {
+                try {
+                    const { error } = await supabaseClient.from('highlights').delete().eq('id', id);
+                    if (error) throw error;
+                    appData.highlights = appData.highlights.filter(h => h.id !== id);
+                    renderAdminHighlights();
+                    showToast('ลบไฮไลท์เรียบร้อยแล้วค่ะ');
+                } catch (err) {
+                    console.error('Delete highlight error:', err);
+                    showToast('ลบไฮไลท์ไม่สำเร็จ: ' + err.message, true);
+                }
+            });
+        }
+
+        async function saveSettings() {
+            if (!isAdminVerified) return;
+            const cBg = document.getElementById('c-bg').value;
+            const cPhone = document.getElementById('c-phone').value;
+            const cMain = document.getElementById('c-main').value;
+            const cSub = document.getElementById('c-sub').value;
+            
+            if (
+                cBg.toLowerCase() !== appData.customColors.bg.toLowerCase() ||
+                cPhone.toLowerCase() !== appData.customColors.phoneBg.toLowerCase() ||
+                cMain.toLowerCase() !== appData.customColors.main.toLowerCase() ||
+                cSub.toLowerCase() !== appData.customColors.sub.toLowerCase()
+            ) {
+                appData.theme = 'custom';
+                appData.customColors = { bg: cBg, phoneBg: cPhone, main: cMain, sub: cSub };
+            }
+
+            const newMarquee = document.getElementById('set-marquee').value.trim() || appData.marqueeText;
+            const newBanner = document.getElementById('set-banner').value.trim() || appData.banner;
+            const newFb = document.getElementById('set-fb').value.trim() || '-';
+            const newIg = document.getElementById('set-ig').value.trim() || '-';
+            const newLine = document.getElementById('set-line').value.trim() || '-';
+
+            const btn = document.getElementById('btn-save-settings');
+            btn.disabled = true;
+            btn.textContent = 'กำลังบันทึก...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('shop_settings')
+                    .update({
+                        theme: appData.theme,
+                        custom_colors: appData.customColors,
+                        marquee_text: newMarquee,
+                        banner_url: newBanner,
+                        contact_fb: newFb,
+                        contact_ig: newIg,
+                        contact_line: newLine,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', 1);
+
+                if (error) throw error;
+
+                appData.marqueeText = newMarquee;
+                appData.banner = newBanner;
+                appData.contacts = { fb: newFb, ig: newIg, line: newLine };
+
+                applyShopUI();
+                showToast('บันทึกการตั้งค่าร้านเรียบร้อยแล้วค่ะ 💙');
+            } catch (err) {
+                console.error('Save settings error:', err);
+                showToast('บันทึกการตั้งค่าไม่สำเร็จ: ' + err.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'บันทึกการตั้งค่า';
+            }
+        }
+    </script>
+</body>
+</html>
